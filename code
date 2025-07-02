@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Database Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gray: #95a5a6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .logo h1 {
+            font-size: 2rem;
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .sidebar {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            height: fit-content;
+        }
+        
+        .content {
+            flex: 3;
+            min-width: 800px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: var(--secondary);
+            color: white;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+        }
+        
+        th:hover {
+            background: var(--primary);
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .actions-cell {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .edit-btn {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .save-btn {
+            background: var(--success);
+            color: white;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        
+        .checkbox-cell {
+            text-align: center;
+        }
+        
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .calculator-result {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .profit-positive {
+            color: var(--success);
+        }
+        
+        .profit-negative {
+            color: var(--danger);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 5px;
+            background: var(--success);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 2000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar, .content {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                margin-top: 15px;
+                width: 100%;
+            }
+            
+            .btn {
+                flex: 1;
+                text-align: center;
+                justify-content: center;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification">
+        <span id="notificationText"></span>
+    </div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-database"></i>
+                <h1>Product <span>Database Manager</span></h1>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" id="importBtn">
+                    <i class="fas fa-file-import"></i> Import CSV
+                </button>
+                <button class="btn btn-success" id="exportBtn">
+                    <i class="fas fa-file-export"></i> Export CSV
+                </button>
+                <button class="btn btn-warning" id="resetBtn">
+                    <i class="fas fa-undo"></i> Reset Changes
+                </button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-filter"></i> Filters</h2>
+                    <div class="form-group">
+                        <label for="searchInput">Search Products</label>
+                        <input type="text" id="searchInput" placeholder="Search by EAN, SKU, title...">
+                    </div>
+                    <div class="form-group">
+                        <label for="supplierFilter">Supplier</label>
+                        <select id="supplierFilter">
+                            <option value="">All Suppliers</option>
+                            <option value="Supplier A">Supplier A</option>
+                            <option value="Supplier B">Supplier B</option>
+                            <option value="Supplier C">Supplier C</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="priceRange">Resale Price Range</label>
+                        <select id="priceRange">
+                            <option value="">All Prices</option>
+                            <option value="0-50">$0 - $50</option>
+                            <option value="50-100">$50 - $100</option>
+                            <option value="100-500">$100 - $500</option>
+                            <option value="500+">$500+</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="applyFilters">
+                        <i class="fas fa-search"></i> Apply Filters
+                    </button>
+                    <button class="btn" id="clearFilters" style="background: var(--gray); color: white; margin-top: 10px;">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <h2 class="card-title"><i class="fas fa-calculator"></i> Profit Calculator</h2>
+                    <div class="form-group">
+                        <label for="markupPercentage">Markup Percentage (%)</label>
+                        <input type="number" id="markupPercentage" placeholder="Enter markup percentage" value="30">
+                    </div>
+                    <div class="form-group">
+                        <label for="costPrice">Cost Price ($)</label>
+                        <input type="number" id="costPrice" placeholder="Enter cost price" value="10.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="fulfillmentCost">Fulfillment Cost ($)</label>
+                        <input type="number" id="fulfillmentCost" placeholder="Enter fulfillment cost" value="2.50">
+                    </div>
+                    <button class="btn btn-success" id="calculateBtn">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <div class="calculator-result">
+                        <div>Recommended Resale Price: <span id="resalePrice">$16.25</span></div>
+                        <div>Profit Margin: <span id="profitMargin" class="profit-positive">$3.75 (23.1%)</span></div>
+                    </div>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value">86</div>
+                        <div class="stat-label">Products</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Suppliers</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$42.8k</div>
+                        <div class="stat-label">Total Value</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">32.5%</div>
+                        <div class="stat-label">Avg. Margin</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="bulk-actions">
+                    <button class="btn btn-warning" id="editSelectedBtn">
+                        <i class="fas fa-edit"></i> Edit Selected
+                    </button>
+                    <button class="btn btn-danger" id="deleteSelectedBtn">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                    <button class="btn btn-success" id="saveChangesBtn">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <div style="flex: 1"></div>
+                    <button class="btn btn-primary" id="addProductBtn">
+                        <i class="fas fa-plus"></i> Add New Product
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table id="productsTable">
+                        <thead>
+                            <tr>
+                                <th class="checkbox-cell"><input type="checkbox" id="selectAll"></th>
+                                <th data-sort="ean">EAN <i class="fas fa-sort"></i></th>
+                                <th data-sort="sku">SKU <i class="fas fa-sort"></i></th>
+                                <th data-sort="title">Title <i class="fas fa-sort"></i></th>
+                                <th data-sort="cost">Cost <i class="fas fa-sort"></i></th>
+                                <th data-sort="supplier">Supplier <i class="fas fa-sort"></i></th>
+                                <th>Link</th>
+                                <th data-sort="costDate">Cost Date <i class="fas fa-sort"></i></th>
+                                <th data-sort="lastUpdated">Last Updated <i class="fas fa-sort"></i></th>
+                                <th data-sort="resalePrice">Resale Price <i class="fas fa-sort"></i></th>
+                                <th data-sort="fulfillmentCost">Fulfillment <i class="fas fa-sort"></i></th>
+                                <th>Profit</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="checkbox-cell"><input type="checkbox"></td>
+                                <td>1234567890123</td>
+                                <td>SKU001</td>
+                                <td>Premium Wireless Headphones</td>
+                                <td>$45.00</td>
+                                <td>Supplier A</td>
+                                <td><a href="#" class="btn btn-primary"><i class="fas fa-link"></i></a></td>
+                                <td>2023-06-15</td>
+                                <td>2023-09-20</td>
+                                <td>$89.99</td>
+                                <td>$4.99</td>
+                                <td class="profit-positive">$40.00</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="checkbox-cell"><input type="checkbox"></td>
+                                <td>2345678901234</td>
+                                <td>SKU002</td>
+                                <td>Smart Fitness Tracker</td>
+                                <td>$22.50</td>
+                                <td>Supplier B</td>
+                                <td><a href="#" class="btn btn-primary"><i class="fas fa-link"></i></a></td>
+                                <td>2023-07-01</td>
+                                <td>2023-10-05</td>
+                                <td>$49.99</td>
+                                <td>$3.99</td>
+                                <td class="profit-positive">$23.50</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="checkbox-cell"><input type="checkbox"></td>
+                                <td>3456789012345</td>
+                                <td>SKU003</td>
+                                <td>Bluetooth Portable Speaker</td>
+                                <td>$18.75</td>
+                                <td>Supplier C</td>
+                                <td><a href="#" class="btn btn-primary"><i class="fas fa-link"></i></a></td>
+                                <td>2023-08-10</td>
+                                <td>2023-11-15</td>
+                                <td>$39.99</td>
+                                <td>$2.99</td>
+                                <td class="profit-positive">$18.25</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="checkbox-cell"><input type="checkbox"></td>
+                                <td>4567890123456</td>
+                                <td>SKU004</td>
+                                <td>4K Ultra HD Action Camera</td>
+                                <td>$87.25</td>
+                                <td>Supplier A</td>
+                                <td><a href="#" class="btn btn-primary"><i class="fas fa-link"></i></a></td>
+                                <td>2023-05-22</td>
+                                <td>2023-08-30</td>
+                                <td>$199.99</td>
+                                <td>$8.99</td>
+                                <td class="profit-positive">$103.75</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="checkbox-cell"><input type="checkbox"></td>
+                                <td>5678901234567</td>
+                                <td>SKU005</td>
+                                <td>Ergonomic Office Chair</td>
+                                <td>$125.00</td>
+                                <td>Supplier D</td>
+                                <td><a href="#" class="btn btn-primary"><i class="fas fa-link"></i></a></td>
+                                <td>2023-04-18</td>
+                                <td>2023-07-25</td>
+                                <td>$249.99</td>
+                                <td>$29.99</td>
+                                <td class="profit-positive">$95.00</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="checkbox-cell"><input type="checkbox"></td>
+                                <td>6789012345678</td>
+                                <td>SKU006</td>
+                                <td>Smartphone Gimbal Stabilizer</td>
+                                <td>$32.99</td>
+                                <td>Supplier B</td>
+                                <td><a href="#" class="btn btn-primary"><i class="fas fa-link"></i></a></td>
+                                <td>2023-09-05</td>
+                                <td>2023-12-10</td>
+                                <td>$69.99</td>
+                                <td>$4.50</td>
+                                <td class="profit-positive">$32.50</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="checkbox-cell"><input type="checkbox"></td>
+                                <td>7890123456789</td>
+                                <td>SKU007</td>
+                                <td>Wireless Charging Pad</td>
+                                <td>$8.50</td>
+                                <td>Supplier C</td>
+                                <td><a href="#" class="btn btn-primary"><i class="fas fa-link"></i></a></td>
+                                <td>2023-10-12</td>
+                                <td>2023-10-12</td>
+                                <td>$19.99</td>
+                                <td>$1.99</td>
+                                <td class="profit-positive">$9.50</td>
+                                <td class="actions-cell">
+                                    <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value">7</div>
+                        <div class="stat-label">Displayed Products</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$340.99</div>
+                        <div class="stat-label">Total Cost</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$719.93</div>
+                        <div class="stat-label">Total Value</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$322.50</div>
+                        <div class="stat-label">Total Profit</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Product Editing -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-edit"></i> Edit Product</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="editEan">EAN Number</label>
+                <input type="text" id="editEan" value="1234567890123">
+            </div>
+            <div class="form-group">
+                <label for="editSku">SKU</label>
+                <input type="text" id="editSku" value="SKU001">
+            </div>
+            <div class="form-group">
+                <label for="editTitle">Product Title</label>
+                <input type="text" id="editTitle" value="Premium Wireless Headphones">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editCost">Cost ($)</label>
+                    <input type="number" id="editCost" value="45.00">
+                </div>
+                <div class="form-group">
+                    <label for="editResale">Resale Price ($)</label>
+                    <input type="number" id="editResale" value="89.99">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editSupplier">Supplier</label>
+                    <select id="editSupplier">
+                        <option>Supplier A</option>
+                        <option>Supplier B</option>
+                        <option>Supplier C</option>
+                        <option>Supplier D</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editFulfillment">Fulfillment Cost ($)</label>
+                    <input type="number" id="editFulfillment" value="4.99">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editCostDate">Cost Date</label>
+                    <input type="date" id="editCostDate" value="2023-06-15">
+                </div>
+                <div class="form-group">
+                    <label for="editLastUpdated">Last Updated</label>
+                    <input type="date" id="editLastUpdated" value="2023-09-20">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="editLink">Product Link</label>
+                <input type="url" id="editLink" value="https://example.com/product1">
+            </div>
+            <button class="btn btn-success" id="saveProductBtn" style="width: 100%; margin-top: 20px;">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Toggle select all checkboxes
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+        
+        // Modal functionality
+        const modal = document.getElementById('editModal');
+        const editButtons = document.querySelectorAll('.edit-btn');
+        const closeModal = document.querySelector('.close-modal');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        
+        function showNotification(message, isSuccess = true) {
+            notificationText.textContent = message;
+            notification.style.backgroundColor = isSuccess ? 'var(--success)' : 'var(--danger)';
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        editButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                modal.style.display = 'flex';
+            });
+        });
+        
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // Profit calculator functionality
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const markup = parseFloat(document.getElementById('markupPercentage').value) || 0;
+            const cost = parseFloat(document.getElementById('costPrice').value) || 0;
+            const fulfillment = parseFloat(document.getElementById('fulfillmentCost').value) || 0;
+            
+            const totalCost = cost + fulfillment;
+            const resalePrice = totalCost * (1 + markup/100);
+            const profit = resalePrice - totalCost;
+            const profitMargin = (profit / resalePrice) * 100;
+            
+            document.getElementById('resalePrice').textContent = '$' + resalePrice.toFixed(2);
+            
+            const profitMarginEl = document.getElementById('profitMargin');
+            profitMarginEl.textContent = '$' + profit.toFixed(2) + 
+                ' (' + profitMargin.toFixed(1) + '%)';
+            
+            if (profitMargin > 25) {
+                profitMarginEl.className = 'profit-positive';
+            } else {
+                profitMarginEl.className = 'profit-negative';
+            }
+        });
+        
+        // Table sorting functionality
+        const table = document.getElementById('productsTable');
+        const headers = table.querySelectorAll('th[data-sort]');
+        let sortDirection = 1;
+        let currentSort = null;
+        
+        headers.forEach(header => {
+            header.addEventListener('click', function() {
+                const sortBy = this.getAttribute('data-sort');
+                sortTable(sortBy);
+            });
+        });
+        
+        function sortTable(sortBy) {
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            // Toggle sort direction if clicking the same column
+            if (currentSort === sortBy) {
+                sortDirection = -sortDirection;
+            } else {
+                sortDirection = 1;
+                currentSort = sortBy;
+            }
+            
+            rows.sort((a, b) => {
+                const aValue = a.cells[getColumnIndex(sortBy)].textContent;
+                const bValue = b.cells[getColumnIndex(sortBy)].textContent;
+                
+                // Handle numeric values
+                if (sortBy === 'cost' || sortBy === 'resalePrice' || sortBy === 'fulfillmentCost') {
+                    const aNum = parseFloat(aValue.replace('$', ''));
+                    const bNum = parseFloat(bValue.replace('$', ''));
+                    return (aNum - bNum) * sortDirection;
+                }
+                
+                // Handle dates
+                if (sortBy === 'costDate' || sortBy === 'lastUpdated') {
+                    return (new Date(aValue) - new Date(bValue)) * sortDirection;
+                }
+                
+                // Default to string comparison
+                return aValue.localeCompare(bValue) * sortDirection;
+            });
+            
+            // Remove existing rows
+            while (tbody.firstChild) {
+                tbody.removeChild(tbody.firstChild);
+            }
+            
+            // Add sorted rows
+            rows.forEach(row => tbody.appendChild(row));
+        }
+        
+        function getColumnIndex(columnName) {
+            const headers = Array.from(table.querySelectorAll('th[data-sort]'));
+            return headers.findIndex(header => header.getAttribute('data-sort') === columnName) + 1;
+        }
+        
+        // Export to CSV functionality
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            // Create CSV content
+            let csvContent = "EAN,SKU,Title,Cost,Supplier,Link,Cost Date,Last Updated,Resale Price,Fulfillment Cost,Profit\n";
+            
+            // Get all table rows
+            const rows = document.querySelectorAll('#productsTable tbody tr');
+            
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                
+                // Skip the checkbox and actions columns
+                const rowData = [
+                    cells[1].textContent,
+                    cells[2].textContent,
+                    cells[3].textContent,
+                    cells[4].textContent.replace('$', ''),
+                    cells[5].textContent,
+                    cells[6].querySelector('a') ? cells[6].querySelector('a').href : '',
+                    cells[7].textContent,
+                    cells[8].textContent,
+                    cells[9].textContent.replace('$', ''),
+                    cells[10].textContent.replace('$', ''),
+                    cells[11].textContent.replace('$', '')
+                ];
+                
+                // Escape any commas in the data
+                const escapedData = rowData.map(cell => {
+                    if (cell.includes(',')) {
+                        return `"${cell}"`;
+                    }
+                    return cell;
+                });
+                
+                csvContent += escapedData.join(',') + '\n';
+            });
+            
+            // Create a Blob with the CSV data
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            
+            // Create a download link and trigger it
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'product_database_export.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show notification
+            showNotification('CSV exported successfully!');
+        });
+        
+        // Button functionality
+        document.getElementById('importBtn').addEventListener('click', function() {
+            alert('CSV import functionality would be implemented');
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset all changes?')) {
+                showNotification('All changes have been reset');
+            }
+        });
+        
+        document.getElementById('applyFilters').addEventListener('click', function() {
+            showNotification('Filters applied successfully');
+        });
+        
+        document.getElementById('clearFilters').addEventListener('click', function() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('supplierFilter').value = '';
+            document.getElementById('priceRange').value = '';
+            showNotification('Filters cleared');
+        });
+        
+        document.getElementById('editSelectedBtn').addEventListener('click', function() {
+            const selected = document.querySelectorAll('tbody input[type="checkbox"]:checked');
+            if (selected.length > 0) {
+                modal.style.display = 'flex';
+                showNotification(`Editing ${selected.length} selected products`);
+            } else {
+                showNotification('Please select at least one product to edit', false);
+            }
+        });
+        
+        document.getElementById('deleteSelectedBtn').addEventListener('click', function() {
+            const selected = document.querySelectorAll('tbody input[type="checkbox"]:checked');
+            if (selected.length > 0) {
+                if (confirm(`Are you sure you want to delete ${selected.length} products?`)) {
+                    showNotification(`${selected.length} products deleted successfully`);
+                }
+            } else {
+                showNotification('Please select at least one product to delete', false);
+            }
+        });
+        
+        document.getElementById('saveChangesBtn').addEventListener('click', function() {
+            showNotification('Changes saved to database');
+        });
+        
+        document.getElementById('addProductBtn').addEventListener('click', function() {
+            modal.style.display = 'flex';
+            // Reset form for new product
+            document.getElementById('editEan').value = '';
+            document.getElementById('editSku').value = '';
+            document.getElementById('editTitle').value = '';
+            document.getElementById('editCost').value = '';
+            document.getElementById('editResale').value = '';
+            document.getElementById('editSupplier').selectedIndex = 0;
+            document.getElementById('editFulfillment').value = '';
+            document.getElementById('editCostDate').value = '';
+            document.getElementById('editLastUpdated').value = new Date().toISOString().split('T')[0];
+            document.getElementById('editLink').value = '';
+        });
+        
+        document.getElementById('saveProductBtn').addEventListener('click', function() {
+            modal.style.display = 'none';
+            showNotification('Product saved successfully');
+        });
+    </script>
+</body>
+</html>
